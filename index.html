@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEND IT · RGB MoCap to Unreal in one click</title>
+<meta name="description" content="SEND IT is a Windows app that sends RGB MoCap animation to Unreal Engine 5 and retargets it onto your MetaHumans in one click. One payment, lifetime licence.">
+<meta property="og:title" content="SEND IT · RGB MoCap to Unreal in one click">
+<meta property="og:description" content="Motion capture from RGB MoCap onto your MetaHuman in seconds. One payment, lifetime licence.">
+<meta property="og:image" content="app.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f5a623'/%3E%3Cpath d='M11 8l10 8-10 8z' fill='%230d0f13'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0d0f13; --panel:#14161b; --field:#16181d; --line:#2a2d34; --text:#e9e6df; --sub:#9aa0a8;
+  --mute:#6b717b; --amber:#f5a623; --amber-hi:#ffbe4d; --amber-bg:#1f1a10; --ok:#3fb950;
+  --mono:"Cascadia Mono","Consolas",ui-monospace,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--amber);text-decoration:none}
+a:hover{color:var(--amber-hi)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.mono{font-family:var(--mono)}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font:900 26px/1 var(--sans);letter-spacing:.5px;color:var(--text)}
+.logo span{color:var(--amber)}
+nav .links{display:flex;gap:22px;align-items:center;font:13px var(--mono);text-transform:uppercase;letter-spacing:1px}
+nav .links a{color:var(--sub)}
+nav .links a:hover{color:var(--text)}
+
+.btn{display:inline-block;font:700 15px var(--mono);letter-spacing:1px;text-transform:uppercase;padding:15px 26px;border:1px solid var(--amber);border-radius:3px;transition:.15s}
+.btn.primary{background:var(--amber);color:#14110a}
+.btn.primary:hover{background:var(--amber-hi);color:#14110a}
+.btn.ghost{color:var(--text);border-color:var(--line);background:var(--panel)}
+.btn.ghost:hover{border-color:var(--sub);color:var(--text)}
+.btn.small{padding:9px 16px;font-size:12px}
+
+.hero{padding:56px 0 30px;display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.eyebrow{font:13px var(--mono);color:var(--amber);letter-spacing:2px;text-transform:uppercase}
+h1{font:900 clamp(40px,6vw,64px)/1.03 var(--sans);margin:14px 0 18px;letter-spacing:-1px}
+h1 em{font-style:normal;color:var(--amber)}
+.lead{color:var(--sub);font-size:18px;max-width:34em;margin:0 0 28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.price-note{font:13px var(--mono);color:var(--mute);margin-top:14px}
+.price-note b{color:var(--text)}
+.shot{border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(245,166,35,.06)}
+.shot img{display:block;width:100%;height:auto}
+
+.flow{display:flex;gap:10px;flex-wrap:wrap;font:13px var(--mono);color:var(--sub);margin:28px 0 0;text-transform:uppercase;letter-spacing:1px}
+.flow span{padding:7px 12px;border:1px solid var(--line);border-radius:3px;background:var(--panel)}
+.flow i{font-style:normal;color:var(--amber);align-self:center}
+
+section{padding:70px 0;border-top:1px solid var(--line)}
+h2{font:800 clamp(28px,4vw,38px)/1.15 var(--sans);margin:0 0 10px;letter-spacing:-.5px}
+.sec-sub{color:var(--sub);margin:0 0 36px;max-width:40em}
+.label{font:12px var(--mono);color:var(--mute);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px}
+.card h3{font:700 17px var(--sans);margin:0 0 6px}
+.card p{margin:0;color:var(--sub);font-size:15px}
+.card .tag{font:12px var(--mono);color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;display:block}
+
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px;position:relative}
+.step::before{counter-increment:s;content:counter(s);font:800 34px var(--mono);color:var(--amber);display:block;margin-bottom:8px}
+.step h3{margin:0 0 6px;font:700 16px var(--sans)}
+.step p{margin:0;color:var(--sub);font-size:14px}
+
+.req{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.req ul{list-style:none;margin:0;padding:0}
+.req li{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
+.req li::before{content:"✓";color:var(--ok);font-weight:700}
+.req li.no::before{content:"—";color:var(--mute)}
+.req li span{color:var(--sub)}
+
+.pricing{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center}
+.pricebox{background:linear-gradient(180deg,var(--amber-bg),var(--panel));border:1px solid var(--amber);border-radius:8px;padding:34px}
+.pricebox .amount{font:900 64px/1 var(--sans);margin:8px 0}
+.pricebox .amount s{font-size:28px;color:var(--mute);font-weight:600;margin-left:10px}
+.pricebox ul{list-style:none;padding:0;margin:20px 0 26px}
+.pricebox li{padding:7px 0;color:var(--sub)}
+.pricebox li b{color:var(--text)}
+.pricebox li::before{content:"→ ";color:var(--amber)}
+.pricebox .btn{width:100%;text-align:center}
+
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:20px}
+summary::after{content:"+";color:var(--amber);font:700 20px var(--mono)}
+details[open] summary::after{content:"–"}
+details p{color:var(--sub);margin:10px 0 0}
+
+footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--mute);font-size:14px}
+footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{color:var(--sub)}
+.fine{margin-top:18px;font-size:12px;line-height:1.6;max-width:60em}
+
+@media (max-width:860px){
+  .hero,.pricing,.req{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  nav .links a.hide-m{display:none}
+}
+@media (max-width:520px){
+  .grid,.steps{grid-template-columns:1fr}
+  .hero{padding-top:26px}
+  nav .links{gap:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="logo">SEND <span>IT.</span></div>
+    <div class="links">
+      <a href="#features" class="hide-m">Features</a>
+      <a href="#how" class="hide-m">How it works</a>
+      <a href="#faq" class="hide-m">FAQ</a>
+      <a class="btn primary small" href="https://buy.polar.sh/polar_cl_jS8Iwj96NUsPnsxC2SXLVyLVSU8dfR76RbNDg28hQWB">Buy</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">For RGB MoCap + Unreal Engine 5</div>
+      <h1>Your mocap on your <em>MetaHuman</em>. One click.</h1>
+      <p class="lead">SEND IT takes the FBX you export from RGB MoCap, brings it into Unreal Engine and retargets it onto your MetaHumans with natural shoulders and planted feet. No manual IK Rig setup, no retarget pose fiddling.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://buy.polar.sh/polar_cl_jS8Iwj96NUsPnsxC2SXLVyLVSU8dfR76RbNDg28hQWB">Buy once · Lifetime</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+      <div class="price-note">Launch price <b>$5</b> (later $7) · one payment · free updates · Windows</div>
+    </div>
+    <div class="shot"><img src="app.png" width="881" height="560" alt="The SEND IT window: add FBX clips, choose shoulders, clip tools and MetaHumans, then press SEND IT"></div>
+  </header>
+
+  <div class="flow"><span>RGB MoCap FBX</span><i>→</i><span>Unreal import</span><i>→</i><span>IK retarget</span><i>→</i><span>MetaHuman</span><i>→</i><span>Level Sequence</span></div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="label">Features</div>
+    <h2>Everything between the export and the shot</h2>
+    <p class="sec-sub">SEND IT does the Unreal side for you: import, rig, retarget and a sequence ready to play.</p>
+    <div class="grid">
+      <div class="card"><span class="tag">Shoulders</span><h3>Perfect shoulders</h3><p>Collarbones sit naturally on the MetaHuman, no shrugging. Also natural, relaxed or exactly as recorded.</p></div>
+      <div class="card"><span class="tag">Feet</span><h3>Planted feet</h3><p>Leg IK keeps feet where the capture put them. No sliding, no jitter added by the retarget.</p></div>
+      <div class="card"><span class="tag">Speed</span><h3>Seconds, not minutes</h3><p>A typical clip is imported and retargeted in under 10 seconds. The retargeter is reused, not rebuilt.</p></div>
+      <div class="card"><span class="tag">MetaHumans</span><h3>Several at once</h3><p>FIND lists the MetaHumans in your project. Pick one or several; each gets its own clip.</p></div>
+      <div class="card"><span class="tag">Clip tools</span><h3>Trim, smooth, in place</h3><p>Keep only the frames you need, calm jitter, remove travel for loops, put feet on the floor and face forward.</p></div>
+      <div class="card"><span class="tag">Sequencer</span><h3>Ready-to-play sequence</h3><p>A Level Sequence with your MetaHuman already animated opens in Sequencer.</p></div>
+      <div class="card"><span class="tag">Live</span><h3>Live preview</h3><p>Your MetaHuman follows RGB MoCap live while you record.</p></div>
+      <div class="card"><span class="tag">Workflow</span><h3>Auto-send and history</h3><p>Watch a folder and send every new export automatically. History reopens any past send.</p></div>
+      <div class="card"><span class="tag">Setup</span><h3>Fixes your project</h3><p>The health check finds RGB MoCap, Blender and Unreal, and turns on the Unreal plugins it needs (with backups).</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="label">How it works</div>
+    <h2>Four steps</h2>
+    <p class="sec-sub">Open your Unreal project, then:</p>
+    <div class="steps">
+      <div class="step"><h3>Export</h3><p>In RGB MoCap: File &gt; Export &gt; FBX.</p></div>
+      <div class="step"><h3>Add</h3><p>In SEND IT: ADD FBX, or right-click the file &gt; Send to.</p></div>
+      <div class="step"><h3>Pick</h3><p>FIND your MetaHumans and click the ones you want.</p></div>
+      <div class="step"><h3>Send it</h3><p>Find the clip under RGBMoCap &gt; Retargeted, with a sequence ready to play.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="requirements">
+  <div class="wrap">
+    <div class="label">Requirements</div>
+    <h2>What you need</h2>
+    <p class="sec-sub">SEND IT works with tools you already have. Check this list before buying.</p>
+    <div class="req">
+      <ul>
+        <li><div>Windows 10 or 11 <span>(64-bit)</span></div></li>
+        <li><div>RGB MoCap installed <span>(SEND IT uses the Blender and Python that come with it)</span></div></li>
+        <li><div>Unreal Engine 5 <span>(tested on 5.8 and 5.9)</span></div></li>
+      </ul>
+      <ul>
+        <li><div>A MetaHuman in your Unreal project <span>(for retargeting)</span></div></li>
+        <li><div>Internet for the first activation <span>(then works offline up to 7 days at a time)</span></div></li>
+        <li class="no"><div>Not included: <span>RGB MoCap, Unreal Engine or MetaHumans themselves</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="buy">
+  <div class="wrap pricing">
+    <div>
+      <div class="label">Pricing</div>
+      <h2>Pay once. Keep it.</h2>
+      <p class="sec-sub">No subscription. Your licence key and download arrive by email right after payment, and stay in your customer portal.</p>
+      <p class="sec-sub">Payments are handled by <a href="https://polar.sh">Polar</a>: cards, Apple Pay and Google Pay, with tax handled for your country.</p>
+    </div>
+    <div class="pricebox">
+      <div class="label">SEND IT · lifetime licence</div>
+      <div class="amount">$5<s>$7</s></div>
+      <div class="price-note" style="margin:0">Launch price</div>
+      <ul>
+        <li><b>Lifetime</b> licence, one payment</li>
+        <li><b>Free updates</b></li>
+        <li>Use on <b>2 PCs</b>, move it any time</li>
+        <li>Key and download sent instantly</li>
+      </ul>
+      <a class="btn primary" href="https://buy.polar.sh/polar_cl_jS8Iwj96NUsPnsxC2SXLVyLVSU8dfR76RbNDg28hQWB">Buy SEND IT</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="label">FAQ</div>
+    <h2>Questions</h2>
+    <details><summary>Where is my licence key after I buy?</summary><p>In the email from Polar and in your <a href="https://polar.sh/kingtech/portal">customer portal</a>: sign in with the email you used for the purchase. In SEND IT, click LICENCE, paste the key and click ACTIVATE.</p></details>
+    <details><summary>Is there a free trial?</summary><p>No. SEND IT is a one-time purchase at a low price. Watch the demo videos and check the requirements above before buying.</p></details>
+    <details><summary>Can I use it on another computer?</summary><p>One key works on 2 PCs. To switch, open LICENCE on the old PC and click MOVE TO ANOTHER PC.</p></details>
+    <details><summary>Does it work offline?</summary><p>Yes, for up to 7 days at a time after a successful online check.</p></details>
+    <details><summary>How do I get updates?</summary><p>SEND IT tells you when a new version is out. Download it from your customer portal and unzip it over the old one; your settings, history and licence stay.</p></details>
+    <details><summary>Do I need iClone or other paid tools?</summary><p>No. You need RGB MoCap and Unreal Engine 5. SEND IT does the retarget inside Unreal.</p></details>
+    <details><summary>Refunds</summary><p>If SEND IT does not work on your setup, contact us through your <a href="https://polar.sh/kingtech/portal">customer portal</a>. A refunded licence stops working.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <div><span class="logo" style="font-size:18px">SEND <span>IT.</span></span> &nbsp;by Kingtech</div>
+      <div><a href="https://polar.sh/kingtech/portal">Customer portal &amp; support</a> &nbsp;·&nbsp; <a href="https://buy.polar.sh/polar_cl_jS8Iwj96NUsPnsxC2SXLVyLVSU8dfR76RbNDg28hQWB">Buy</a></div>
+    </div>
+    <p class="fine">SEND IT is an independent tool and is not affiliated with or endorsed by the makers of RGB MoCap, Epic Games, Unreal Engine or MetaHuman. Those products and their licences are your own. Unreal Engine and MetaHuman are trademarks of Epic Games, Inc.</p>
+  </div>
+</footer>
+
+</body>
+</html>
